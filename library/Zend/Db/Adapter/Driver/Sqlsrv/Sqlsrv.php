@@ -1,34 +1,22 @@
 <?php
 /**
- * Zend Framework
+ * Zend Framework (http://framework.zend.com/)
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * http://framework.zend.com/license/new-bsd
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@zend.com so we can send you a copy immediately.
- *
- * @category   Zend
- * @package    Zend_Db
- * @subpackage Adapter
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
- * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ * @link      http://github.com/zendframework/zf2 for the canonical source repository
+ * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @package   Zend_Db
  */
 
 namespace Zend\Db\Adapter\Driver\Sqlsrv;
 
 use Zend\Db\Adapter\Driver\DriverInterface;
+use Zend\Db\Adapter\Exception;
 
 /**
  * @category   Zend
  * @package    Zend_Db
  * @subpackage Adapter
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
- * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Sqlsrv implements DriverInterface
 {
@@ -59,19 +47,16 @@ class Sqlsrv implements DriverInterface
             $connection = new Connection($connection);
         }
 
-        if (!$connection instanceof Connection) {
-            throw new \InvalidArgumentException('$connection must be an array of parameters or a Pdo\Connection object');
-        }
-
         $this->registerConnection($connection);
         $this->registerStatementPrototype(($statementPrototype) ?: new Statement());
         $this->registerResultPrototype(($resultPrototype) ?: new Result());
     }
+
     /**
      * Register connection
-     * 
+     *
      * @param  Connection $connection
-     * @return Sqlsrv 
+     * @return Sqlsrv
      */
     public function registerConnection(Connection $connection)
     {
@@ -79,30 +64,37 @@ class Sqlsrv implements DriverInterface
         $this->connection->setDriver($this);
         return $this;
     }
+
     /**
      * Register statement prototype
-     * 
-     * @param Statement $statementPrototype 
+     *
+     * @param Statement $statementPrototype
+     * @return Sqlsrv
      */
     public function registerStatementPrototype(Statement $statementPrototype)
     {
         $this->statementPrototype = $statementPrototype;
         $this->statementPrototype->setDriver($this);
+        return $this;
     }
+
     /**
      * Register result prototype
-     * 
-     * @param Result $resultPrototype 
+     *
+     * @param Result $resultPrototype
+     * @return Sqlsrv
      */
     public function registerResultPrototype(Result $resultPrototype)
     {
         $this->resultPrototype = $resultPrototype;
+        return $this;
     }
+
     /**
      * Get database paltform name
-     * 
+     *
      * @param  string $nameFormat
-     * @return string 
+     * @return string
      */
     public function getDatabasePlatformName($nameFormat = self::NAME_FORMAT_CAMELCASE)
     {
@@ -112,13 +104,15 @@ class Sqlsrv implements DriverInterface
             return 'SQLServer';
         }
     }
+
     /**
      * Check environment
+     * @return void
      */
     public function checkEnvironment()
     {
         if (!extension_loaded('sqlsrv')) {
-            throw new \Exception('The Sqlsrv extension is required for this adapter but the extension is not loaded');
+            throw new Exception\RuntimeException('The Sqlsrv extension is required for this adapter but the extension is not loaded');
         }
     }
 
@@ -139,21 +133,24 @@ class Sqlsrv implements DriverInterface
         $statement = clone $this->statementPrototype;
         if (is_string($sqlOrResource)) {
             $statement->setSql($sqlOrResource);
-        } elseif ($sqlOrResource instanceof \PDOStatement) {
+            if (!$this->connection->isConnected()) {
+                $this->connection->connect();
+            }
+            $statement->initialize($this->connection->getResource());
+        } elseif (is_resource($sqlOrResource)) {
             $statement->setResource($sqlOrResource);
         }
-        $statement->initialize($this->connection->getResource());
         return $statement;
     }
 
     /**
-     * @param resource $result
+     * @param resource $resource
      * @return Result
      */
     public function createResult($resource)
     {
         $result = clone $this->resultPrototype;
-        $result->initialize($resource);
+        $result->initialize($resource, $this->connection->getLastGeneratedValue());
         return $result;
     }
 
@@ -166,12 +163,21 @@ class Sqlsrv implements DriverInterface
     }
 
     /**
-     * @param $name
+     * @param string $name
+     * @param mixed  $type
      * @return string
      */
     public function formatParameterName($name, $type = null)
     {
         return '?';
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLastGeneratedValue()
+    {
+        return $this->getConnection()->getLastGeneratedValue();
     }
 
 }

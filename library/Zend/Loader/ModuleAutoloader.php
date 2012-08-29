@@ -1,13 +1,21 @@
 <?php
+/**
+ * Zend Framework (http://framework.zend.com/)
+ *
+ * @link      http://github.com/zendframework/zf2 for the canonical source repository
+ * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @package   Zend_Loader
+ */
 
 namespace Zend\Loader;
 
 // Grab SplAutoloader interface
 require_once __DIR__ . '/SplAutoloader.php';
 
-use GlobIterator,
-    SplFileInfo,
-    Traversable;
+use GlobIterator;
+use SplFileInfo;
+use Traversable;
 
 class ModuleAutoloader implements SplAutoloader
 {
@@ -37,7 +45,6 @@ class ModuleAutoloader implements SplAutoloader
      * Allow configuration of the autoloader via the constructor.
      *
      * @param  null|array|Traversable $options
-     * @return void
      */
     public function __construct($options = null)
     {
@@ -259,21 +266,22 @@ class ModuleAutoloader implements SplAutoloader
      */
     public function registerPaths($paths)
     {
-        if (is_array($paths) || $paths instanceof Traversable) {
-            foreach ($paths as $module => $path) {
-                if (is_string($module)) {
-                    $this->registerPath($path, $module);
-                } else {
-                    $this->registerPath($path);
-                }
-            }
-        } else {
+        if (!is_array($paths) && !$paths instanceof Traversable) {
             throw new \InvalidArgumentException(
                 'Parameter to \\Zend\\Loader\\ModuleAutoloader\'s '
                 . 'registerPaths method must be an array or '
                 . 'implement the \\Traversable interface'
             );
         }
+
+        foreach ($paths as $module => $path) {
+            if (is_string($module)) {
+                $this->registerPath($path, $module);
+            } else {
+                $this->registerPath($path);
+            }
+        }
+
         return $this;
     }
 

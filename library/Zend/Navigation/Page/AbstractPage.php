@@ -1,31 +1,20 @@
 <?php
 /**
- * Zend Framework
+ * Zend Framework (http://framework.zend.com/)
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * http://framework.zend.com/license/new-bsd
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@zend.com so we can send you a copy immediately.
- *
- * @category   Zend
- * @package    Zend_Navigation
- * @subpackage Page
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
- * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ * @link      http://github.com/zendframework/zf2 for the canonical source repository
+ * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @package   Zend_Navigation
  */
 
 namespace Zend\Navigation\Page;
 
-use Traversable,
-    Zend\Acl\Resource as AclResource,
-    Zend\Navigation\Container,
-    Zend\Navigation\Exception,
-    Zend\Stdlib\IteratorToArray;
+use Traversable;
+use Zend\Navigation\AbstractContainer;
+use Zend\Navigation\Exception;
+use Zend\Permissions\Acl\Resource\ResourceInterface as AclResource;
+use Zend\Stdlib\ArrayUtils;
 
 /**
  * Base class for Zend\Navigation\Page pages
@@ -33,10 +22,8 @@ use Traversable,
  * @category   Zend
  * @package    Zend_Navigation
  * @subpackage Page
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
- * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-abstract class AbstractPage extends Container
+abstract class AbstractPage extends AbstractContainer
 {
     /**
      * Page label
@@ -115,7 +102,7 @@ abstract class AbstractPage extends Container
     /**
      * ACL resource associated with this page
      *
-     * @var string|\Zend\Acl\Resource|null
+     * @var string|AclResource|null
      */
     protected $resource;
 
@@ -143,7 +130,7 @@ abstract class AbstractPage extends Container
     /**
      * Parent container
      *
-     * @var \Zend\Navigation\Container|null
+     * @var \Zend\Navigation\AbstractContainer|null
      */
     protected $parent;
 
@@ -168,7 +155,7 @@ abstract class AbstractPage extends Container
      * If 'type' is not given, the type of page to construct will be determined
      * by the following rules:
      * - If $options contains either of the keys 'action', 'controller',
-     *   'module', or 'route', a Zend_Navigation_Page_Mvc page will be created.
+     *   or 'route', a Zend_Navigation_Page_Mvc page will be created.
      * - If $options contains the key 'uri', a Zend_Navigation_Page_Uri page
      *   will be created.
      *
@@ -190,7 +177,7 @@ abstract class AbstractPage extends Container
     public static function factory($options)
     {
         if ($options instanceof Traversable) {
-            $options = IteratorToArray::convert($options);
+            $options = ArrayUtils::iteratorToArray($options);
         }
 
         if (!is_array($options)) {
@@ -233,7 +220,6 @@ abstract class AbstractPage extends Container
 
         $hasUri = isset($options['uri']);
         $hasMvc = isset($options['action']) || isset($options['controller'])
-                || isset($options['module'])
                 || isset($options['route']);
 
         if ($hasMvc) {
@@ -257,7 +243,7 @@ abstract class AbstractPage extends Container
     public function __construct($options = null)
     {
         if ($options instanceof Traversable) {
-            $options = IteratorToArray::convert($options);
+            $options = ArrayUtils::iteratorToArray($options);
         }
         if (is_array($options)) {
             $this->setOptions($options);
@@ -497,7 +483,7 @@ abstract class AbstractPage extends Container
 
         if (null !== $relations) {
             if ($relations instanceof Traversable) {
-                $relations = IteratorToArray::convert($relations);
+                $relations = ArrayUtils::iteratorToArray($relations);
             }
 
             if (!is_array($relations)) {
@@ -561,7 +547,7 @@ abstract class AbstractPage extends Container
 
         if (null !== $relations) {
             if ($relations instanceof Traversable) {
-                $relations = IteratorToArray::convert($relations);
+                $relations = ArrayUtils::iteratorToArray($relations);
             }
 
             if (!is_array($relations)) {
@@ -655,17 +641,17 @@ abstract class AbstractPage extends Container
     }
 
     /**
-     * Sets ACL resource assoicated with this page
+     * Sets ACL resource associated with this page
      *
-     * @param  string|AclResource $resource [optional] resource to associate 
-     *                                      with page. Default is null, which 
+     * @param  string|AclResource $resource [optional] resource to associate
+     *                                      with page. Default is null, which
      *                                      sets no resource.
      * @return AbstractPage fluent interface, returns self
      * @throws Exception\InvalidArgumentException if $resource is invalid
      */
     public function setResource($resource = null)
     {
-        if (null === $resource 
+        if (null === $resource
             || is_string($resource)
             || $resource instanceof AclResource
         ) {
@@ -673,7 +659,7 @@ abstract class AbstractPage extends Container
         } else {
             throw new Exception\InvalidArgumentException(
                 'Invalid argument: $resource must be null, a string, ' .
-                'or an instance of Zend\Acl\Resource'
+                'or an instance of Zend\Permissions\Acl\Resource\ResourceInterface'
             );
         }
 
@@ -681,7 +667,7 @@ abstract class AbstractPage extends Container
     }
 
     /**
-     * Returns ACL resource assoicated with this page
+     * Returns ACL resource associated with this page
      *
      * @return string|AclResource|null  ACL resource or null
      */
@@ -792,7 +778,7 @@ abstract class AbstractPage extends Container
      */
     public function isVisible($recursive = false)
     {
-        if ($recursive 
+        if ($recursive
             && isset($this->parent)
             && $this->parent instanceof self
         ) {
@@ -823,11 +809,11 @@ abstract class AbstractPage extends Container
     /**
      * Sets parent container
      *
-     * @param  Container $parent [optional] new parent to set.
+     * @param  AbstractContainer $parent [optional] new parent to set.
      *                           Default is null which will set no parent.
      * @return AbstractPage fluent interface, returns self
      */
-    public function setParent(Container $parent = null)
+    public function setParent(AbstractContainer $parent = null)
     {
         if ($parent === $this) {
             throw new Exception\InvalidArgumentException(
@@ -859,7 +845,7 @@ abstract class AbstractPage extends Container
     /**
      * Returns parent container
      *
-     * @return Container|null  parent container or null
+     * @return AbstractContainer|null  parent container or null
      */
     public function getParent()
     {
@@ -887,8 +873,7 @@ abstract class AbstractPage extends Container
 
         $method = 'set' . self::normalizePropertyName($property);
 
-        if ($method != 'setOptions' && $method != 'setConfig'
-            && method_exists($this, $method)
+        if ($method != 'setOptions' && method_exists($this, $method)
         ) {
             $this->$method($value);
         } else {
@@ -1118,7 +1103,7 @@ abstract class AbstractPage extends Container
      *
      * @return string  a hash code value for this page
      */
-    public final function hashCode()
+    final public function hashCode()
     {
         return spl_object_hash($this);
     }
@@ -1144,7 +1129,7 @@ abstract class AbstractPage extends Container
             'privilege' => $this->getPrivilege(),
             'active'    => $this->isActive(),
             'visible'   => $this->isVisible(),
-            'type'      => get_class($this),
+            'type'      => get_called_class(),
             'pages'     => parent::toArray(),
         ));
     }

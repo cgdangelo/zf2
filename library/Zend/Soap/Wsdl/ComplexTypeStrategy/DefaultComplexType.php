@@ -1,44 +1,23 @@
 <?php
 /**
- * Zend Framework
+ * Zend Framework (http://framework.zend.com/)
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * http://framework.zend.com/license/new-bsd
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@zend.com so we can send you a copy immediately.
- *
- * @category   Zend
- * @package    Zend_Soap
- * @subpackage WSDL
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
- * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ * @link      http://github.com/zendframework/zf2 for the canonical source repository
+ * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @package   Zend_Soap
  */
 
-/**
- * @namespace
- */
 namespace Zend\Soap\Wsdl\ComplexTypeStrategy;
-
-use Zend\Soap;
 
 use Zend\Soap\Exception;
 
 /**
  * Zend_Soap_Wsdl_Strategy_DefaultComplexType
  *
- * @uses       ReflectionClass
- * @uses       \Zend\Soap\WsdlException
- * @uses       \Zend\Soap\Wsdl\Strategy\AbstractStrategy
  * @category   Zend
  * @package    Zend_Soap
  * @subpackage WSDL
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
- * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class DefaultComplexType extends AbstractComplexTypeStrategy
 {
@@ -50,7 +29,7 @@ class DefaultComplexType extends AbstractComplexTypeStrategy
      */
     public function addComplexType($type)
     {
-        if(!class_exists($type)) {
+        if (!class_exists($type)) {
             throw new Exception\InvalidArgumentException(sprintf(
                 'Cannot add a complex type %s that is not an object or where '
               . 'class could not be found in \'DefaultComplexType\' strategy.', $type
