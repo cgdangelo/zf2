@@ -40,6 +40,11 @@ class FormRow extends AbstractHelper
     protected $labelAttributes;
 
     /**
+     * @var string
+     */
+    protected $inputErrorClass = 'input-error';
+
+    /**
      * @var FormLabel
      */
     protected $labelHelper;
@@ -68,8 +73,20 @@ class FormRow extends AbstractHelper
         $labelHelper         = $this->getLabelHelper();
         $elementHelper       = $this->getElementHelper();
         $elementErrorsHelper = $this->getElementErrorsHelper();
-        $label               = $element->getLabel();
-        $elementString       = $elementHelper->render($element);
+
+        $label           = $element->getLabel();
+        $inputErrorClass = $this->getInputErrorClass();
+        $elementErrors   = $elementErrorsHelper->render($element);
+
+        // Does this element have errors ?
+        if (!empty($elementErrors) && !empty($inputErrorClass)) {
+            $classAttributes = ($element->hasAttribute('class') ? $element->getAttribute('class') . ' ' : '');
+            $classAttributes = $classAttributes . $inputErrorClass;
+
+            $element->setAttribute('class', $classAttributes);
+        }
+
+        $elementString = $elementHelper->render($element);
 
         if (!empty($label)) {
             $label = $escapeHtmlHelper($label);
@@ -82,7 +99,7 @@ class FormRow extends AbstractHelper
             // Multicheckbox elements have to be handled differently as the HTML standard does not allow nested
             // labels. The semantic way is to group them inside a fieldset
             $type = $element->getAttribute('type');
-            if ($type === 'multi_checkbox' || $type === 'multicheckbox' || $type === 'radio') {
+            if ($type === 'multi_checkbox' || $type === 'radio') {
                 $markup = sprintf(
                     '<fieldset><legend>%s</legend>%s</fieldset>',
                     $label,
@@ -108,12 +125,12 @@ class FormRow extends AbstractHelper
                 }
 
                 if ($this->renderErrors) {
-                    $markup .= $elementErrorsHelper->render($element);
+                    $markup .= $elementErrors;
                 }
             }
         } else {
             if ($this->renderErrors) {
-                $markup = $elementString . $elementErrorsHelper->render($element);
+                $markup = $elementString . $elementErrors;
             } else {
                 $markup = $elementString;
             }
@@ -221,6 +238,28 @@ class FormRow extends AbstractHelper
     public function getLabelAttributes()
     {
         return $this->labelAttributes;
+    }
+
+    /**
+     * Set the class that is added to element that have errors
+     *
+     * @param  string $inputErrorClass
+     * @return FormRow
+     */
+    public function setInputErrorClass($inputErrorClass)
+    {
+        $this->inputErrorClass = $inputErrorClass;
+        return $this;
+    }
+
+    /**
+     * Get the class that is added to element that have errors
+     *
+     * @return string
+     */
+    public function getInputErrorClass()
+    {
+        return $this->inputErrorClass;
     }
 
     /**
