@@ -12,8 +12,12 @@ namespace Zend\Stdlib\Hydrator;
 
 use ReflectionClass;
 use Zend\Stdlib\Exception;
-use Zend\Stdlib\Hydrator\HydratorInterface;
 
+/**
+ * @category   Zend
+ * @package    Zend_Stdlib
+ * @subpackage Hydrator
+ */
 class Reflection extends AbstractHydrator
 {
     /**

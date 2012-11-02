@@ -188,7 +188,7 @@ class Reader
      * @param  string $uri The URI to the feed
      * @param  string $etag OPTIONAL Last received ETag for this resource
      * @param  string $lastModified OPTIONAL Last-Modified value for this resource
-     * @return Reader
+     * @return Feed\FeedInterface
      * @throws Exception\RuntimeException
      */
     public static function import($uri, $etag = null, $lastModified = null)
@@ -242,7 +242,7 @@ class Reader
                 return self::importString($data);
             }
             $response = $client->send();
-            if ((int)$response->getStatusCode() !== 200) {
+            if ((int) $response->getStatusCode() !== 200) {
                 throw new Exception\RuntimeException('Feed failed to load, got response code ' . $response->getStatusCode());
             }
             $responseXml = $response->getBody();
@@ -250,7 +250,7 @@ class Reader
             return self::importString($responseXml);
         } else {
             $response = $client->send();
-            if ((int)$response->getStatusCode() !== 200) {
+            if ((int) $response->getStatusCode() !== 200) {
                 throw new Exception\RuntimeException('Feed failed to load, got response code ' . $response->getStatusCode());
             }
             $reader = self::importString($response->getBody());

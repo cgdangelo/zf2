@@ -48,7 +48,7 @@ class Statement implements StatementInterface
     protected $parameterReferences = array();
 
     /**
-     * @var Zend\Db\Adapter\ParameterContainer\ParameterContainer
+     * @var ParameterContainer
      */
     protected $parameterContainer = null;
 
@@ -89,11 +89,16 @@ class Statement implements StatementInterface
     public function initialize($resource)
     {
         $resourceType = get_resource_type($resource);
-        if ($resourceType != 'SQL Server Connection' && $resourceType != 'SQL Server Statement') {
+
+        if ($resourceType == 'SQL Server Connection') {
+            $this->sqlsrv = $resource;
+        } elseif ($resourceType == 'SQL Server Statement') {
+            $this->resource = $resource;
+            $this->isPrepared = true;
+        } else {
             throw new Exception\InvalidArgumentException('Invalid resource provided to ' . __CLASS__);
         }
 
-        $this->sqlsrv = $resource;
         return $this;
     }
 

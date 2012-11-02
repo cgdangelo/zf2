@@ -121,19 +121,23 @@ class FormRow extends AbstractHelper
                     $labelClose = $labelHelper->closeTag();
                 }
 
+                if ($label !== '') {
+                    $label = '<span>' . $label . '</span>';
+                }
+
                 switch ($this->labelPosition) {
                     case self::LABEL_PREPEND:
-                        $markup = $labelOpen . '<span>' . $label . '</span>' . $elementString . $labelClose;
+                        $markup = $labelOpen . $label . $elementString . $labelClose;
                         break;
                     case self::LABEL_APPEND:
                     default:
-                        $markup = $labelOpen . $elementString . '<span>' . $label . '</span>' . $labelClose;
+                        $markup = $labelOpen . $elementString . $label . $labelClose;
                         break;
                 }
+            }
 
-                if ($this->renderErrors) {
-                    $markup .= $elementErrors;
-                }
+            if ($this->renderErrors) {
+                $markup .= $elementErrors;
             }
         } else {
             if ($this->renderErrors) {
