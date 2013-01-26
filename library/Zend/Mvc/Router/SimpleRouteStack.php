@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  * @package   Zend_Mvc
  */
@@ -257,9 +257,9 @@ class SimpleRouteStack implements RouteStackInterface
             if (($match = $route->match($request)) instanceof RouteMatch) {
                 $match->setMatchedRouteName($name);
 
-                foreach ($this->defaultParams as $name => $value) {
-                    if ($match->getParam($name) === null) {
-                        $match->setParam($name, $value);
+                foreach ($this->defaultParams as $paramName => $value) {
+                    if ($match->getParam($paramName) === null) {
+                        $match->setParam($paramName, $value);
                     }
                 }
 

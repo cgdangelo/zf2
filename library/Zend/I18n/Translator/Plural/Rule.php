@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  * @package   Zend_I18n
  */
@@ -182,8 +182,8 @@ class Rule
      */
     public static function fromString($string)
     {
-        if (self::$parser === null) {
-            self::$parser = new Parser();
+        if (static::$parser === null) {
+            static::$parser = new Parser();
         }
 
         if (!preg_match('(nplurals=(?P<nplurals>\d+))', $string, $match)) {
@@ -202,10 +202,10 @@ class Rule
             ));
         }
 
-        $tree = self::$parser->parse($match['plural']);
-        $ast  = self::createAst($tree);
+        $tree = static::$parser->parse($match['plural']);
+        $ast  = static::createAst($tree);
 
-        return new self($numPlurals, $ast);
+        return new static($numPlurals, $ast);
     }
 
     /**
@@ -230,18 +230,18 @@ class Rule
                 break;
 
             case '!':
-                $ast['arguments'][] = self::createAst($symbol->first);
+                $ast['arguments'][] = static::createAst($symbol->first);
                 break;
 
             case '?':
-                $ast['arguments'][] = self::createAst($symbol->first);
-                $ast['arguments'][] = self::createAst($symbol->second);
-                $ast['arguments'][] = self::createAst($symbol->third);
+                $ast['arguments'][] = static::createAst($symbol->first);
+                $ast['arguments'][] = static::createAst($symbol->second);
+                $ast['arguments'][] = static::createAst($symbol->third);
                 break;
 
             default:
-                $ast['arguments'][] = self::createAst($symbol->first);
-                $ast['arguments'][] = self::createAst($symbol->second);
+                $ast['arguments'][] = static::createAst($symbol->first);
+                $ast['arguments'][] = static::createAst($symbol->second);
                 break;
         }
 

@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  * @package   Zend_Soap
  */
@@ -17,10 +17,6 @@ use Zend\Soap\Exception;
  * .NET SOAP client
  *
  * Class is intended to be used with .Net Web Services.
- *
- * Important! Class is at experimental stage now.
- * Please leave your notes, compatibility issues reports or
- * suggestions in fw-webservices@lists.zend.com or fw-general@lists.com
  *
  * @category   Zend
  * @package    Zend_Soap
@@ -78,5 +74,4 @@ class DotNet extends SOAPClient
 
         return $result->$resultProperty;
     }
-
 }

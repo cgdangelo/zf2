@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  * @package   Zend_View
  */
@@ -44,59 +44,46 @@ class JsonStrategyTest extends TestCase
         $this->assertSame($this->renderer, $result);
     }
 
-    public function testJsonAcceptHeaderSelectsJsonStrategy()
+    /**
+     * @group #2410
+     */
+    public function testJsonAcceptHeaderDoesNotSelectJsonStrategy()
     {
         $request = new HttpRequest();
         $request->getHeaders()->addHeaderLine('Accept', 'application/json');
         $this->event->setRequest($request);
         $result = $this->strategy->selectRenderer($this->event);
-        $this->assertSame($this->renderer, $result);
+        $this->assertNotSame($this->renderer, $result);
     }
 
-    public function testJavascriptAcceptHeaderSelectsJsonStrategy()
+    /**
+     * @group #2410
+     */
+    public function testJavascriptAcceptHeaderDoesNotSelectJsonStrategy()
     {
         $request = new HttpRequest();
         $request->getHeaders()->addHeaderLine('Accept', 'application/javascript');
+        $this->event->setRequest($request);
+        $result = $this->strategy->selectRenderer($this->event);
+        $this->assertNotSame($this->renderer, $result);
+    }
+
+    /**
+     * @group #2410
+     */
+    public function testJsonModelJavascriptAcceptHeaderDoesNotSetJsonpCallback()
+    {
+        $this->event->setModel(new JsonModel());
+        $request = new HttpRequest();
+        $request->getHeaders()->addHeaderLine('Accept', 'application/javascript');
+        $request->setQuery(new Parameters(array('callback' => 'foo')));
         $this->event->setRequest($request);
         $result = $this->strategy->selectRenderer($this->event);
         $this->assertSame($this->renderer, $result);
         $this->assertFalse($result->hasJsonpCallback());
     }
 
-    public function testJsonModelMatchedAcceptHeaderMatchSelectsJsonStrategy()
-    {
-        $this->event->setModel(new JsonModel());
-        $request = new HttpRequest();
-        $request->getHeaders()->addHeaderLine('Accept', '*/*');
-        $this->event->setRequest($request);
-        $result = $this->strategy->selectRenderer($this->event);
-        $this->assertSame($this->renderer, $result);
-    }
-
-    public function testJsonModelJavascriptAcceptHeaderSetsJsonpCallback()
-    {
-        $this->event->setModel(new JsonModel());
-        $request = new HttpRequest();
-        $request->getHeaders()->addHeaderLine('Accept', 'application/javascript');
-        $request->setQuery(new Parameters(array('callback' => 'foo')));
-        $this->event->setRequest($request);
-        $result = $this->strategy->selectRenderer($this->event);
-        $this->assertSame($this->renderer, $result);
-        $this->assertTrue($result->hasJsonpCallback());
-    }
-
-    public function testJavascriptAcceptHeaderSelectsJsonStrategyAndSetsJsonpCallback()
-    {
-        $request = new HttpRequest();
-        $request->getHeaders()->addHeaderLine('Accept', 'application/javascript');
-        $request->setQuery(new Parameters(array('callback' => 'foo')));
-        $this->event->setRequest($request);
-        $result = $this->strategy->selectRenderer($this->event);
-        $this->assertSame($this->renderer, $result);
-        $this->assertTrue($result->hasJsonpCallback());
-    }
-
-    public function testLackOfJsonModelOrAcceptHeaderDoesNotSelectJsonStrategy()
+    public function testLackOfJsonModelDoesNotSelectJsonStrategy()
     {
         $result = $this->strategy->selectRenderer($this->event);
         $this->assertNotSame($this->renderer, $result);

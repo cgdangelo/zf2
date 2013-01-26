@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  * @package   Zend_Db
  */
@@ -55,6 +55,16 @@ class InsertTest extends \PHPUnit_Framework_TestCase
         $this->insert->values(array('foo' => 'bar'));
         $this->assertEquals(array('foo'), $this->readAttribute($this->insert, 'columns'));
         $this->assertEquals(array('bar'), $this->readAttribute($this->insert, 'values'));
+
+        // test will merge cols and values of previously set stuff
+        $this->insert->values(array('foo' => 'bax'), Insert::VALUES_MERGE);
+        $this->insert->values(array('boom' => 'bam'), Insert::VALUES_MERGE);
+        $this->assertEquals(array('foo', 'boom'), $this->readAttribute($this->insert, 'columns'));
+        $this->assertEquals(array('bax', 'bam'), $this->readAttribute($this->insert, 'values'));
+
+        $this->insert->values(array('foo' => 'bax'));
+        $this->assertEquals(array('foo'), $this->readAttribute($this->insert, 'columns'));
+        $this->assertEquals(array('bax'), $this->readAttribute($this->insert, 'values'));
     }
 
 

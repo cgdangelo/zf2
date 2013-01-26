@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  * @package   Zend_Mvc
  */
@@ -13,7 +13,6 @@ namespace Zend\Mvc;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerInterface;
 use Zend\ServiceManager\ServiceManager;
-use Zend\Stdlib\RequestInterface;
 use Zend\Stdlib\ResponseInterface;
 
 /**
@@ -75,7 +74,7 @@ class Application implements
     protected $events;
 
     /**
-     * @var RequestInterface
+     * @var \Zend\Stdlib\RequestInterface
      */
     protected $request;
 
@@ -160,7 +159,7 @@ class Application implements
     /**
      * Get the request object
      *
-     * @return RequestInterface
+     * @return \Zend\Stdlib\RequestInterface
      */
     public function getRequest()
     {
@@ -281,6 +280,7 @@ class Application implements
             $response = $result->last();
             if ($response instanceof ResponseInterface) {
                 $event->setTarget($this);
+                $event->setResponse($response);
                 $events->trigger(MvcEvent::EVENT_FINISH, $event);
                 return $response;
             }
@@ -300,6 +300,7 @@ class Application implements
         $response = $result->last();
         if ($response instanceof ResponseInterface) {
             $event->setTarget($this);
+            $event->setResponse($response);
             $events->trigger(MvcEvent::EVENT_FINISH, $event);
             return $response;
         }

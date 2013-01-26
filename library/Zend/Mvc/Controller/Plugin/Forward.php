@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  * @package   Zend_Mvc
  */
@@ -135,10 +135,14 @@ class Forward extends AbstractPlugin
             }
         }
 
-        // Allow passing parameters to seed the RouteMatch with
+
+        // Allow passing parameters to seed the RouteMatch with & copy matched route name
         if ($params !== null) {
-            $event->setRouteMatch(new RouteMatch($params));
+            $routeMatch = new RouteMatch($params);
+            $routeMatch->setMatchedRouteName($event->getRouteMatch()->getMatchedRouteName());
+            $event->setRouteMatch($routeMatch);
         }
+
 
         if ($this->numNestedForwards > $this->maxNestedForwards) {
             throw new Exception\DomainException("Circular forwarding detected: greater than $this->maxNestedForwards nested forwards");

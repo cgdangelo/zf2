@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  * @package   Zend_Db
  */
@@ -50,6 +50,7 @@ class MysqlTest extends \PHPUnit_Framework_TestCase
     public function testQuoteIdentifier()
     {
         $this->assertEquals('`identifier`', $this->platform->quoteIdentifier('identifier'));
+        $this->assertEquals('`ident``ifier`', $this->platform->quoteIdentifier('ident`ifier'));
     }
 
     /**
@@ -60,6 +61,10 @@ class MysqlTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('`identifier`', $this->platform->quoteIdentifierChain('identifier'));
         $this->assertEquals('`identifier`', $this->platform->quoteIdentifierChain(array('identifier')));
         $this->assertEquals('`schema`.`identifier`', $this->platform->quoteIdentifierChain(array('schema','identifier')));
+
+        $this->assertEquals('`ident``ifier`', $this->platform->quoteIdentifierChain('ident`ifier'));
+        $this->assertEquals('`ident``ifier`', $this->platform->quoteIdentifierChain(array('ident`ifier')));
+        $this->assertEquals('`schema`.`ident``ifier`', $this->platform->quoteIdentifierChain(array('schema','ident`ifier')));
     }
 
     /**

@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  * @package   Zend_Code
  */
@@ -141,7 +141,7 @@ class AnnotationScanner extends AnnotationCollection implements ScannerInterface
         $annotationParentCount = 0;
 
 
-        $MACRO_STREAM_ADVANCE_CHAR = function ($positionsForward = 1) use (&$stream, &$streamIndex, &$currentChar, &$currentWord, &$currentLine, &$annotationMode) {
+        $MACRO_STREAM_ADVANCE_CHAR = function ($positionsForward = 1) use (&$stream, &$streamIndex, &$currentChar, &$currentWord, &$currentLine) {
             $positionsForward = ($positionsForward > 0) ? $positionsForward : 1;
             $streamIndex      = ($streamIndex === null) ? 0 : $streamIndex + $positionsForward;
             if (!isset($stream[$streamIndex])) {

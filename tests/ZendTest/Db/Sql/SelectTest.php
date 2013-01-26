@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  * @package   Zend_Db
  */
@@ -84,6 +84,17 @@ class SelectTest extends \PHPUnit_Framework_TestCase
         $return = $select->join('foo', 'x = y', Select::SQL_STAR, Select::JOIN_INNER);
         $this->assertSame($select, $return);
         return $return;
+    }
+
+    /**
+     * @testdox unit test: Test join() exception with bad join
+     * @covers Zend\Db\Sql\Select::join
+     */
+    public function testBadJoin()
+    {
+        $select = new Select;
+        $this->setExpectedException('Zend\Db\Sql\Exception\InvalidArgumentException', "expects 'foo' as");
+        $select->join(array('foo'), 'x = y', Select::SQL_STAR, Select::JOIN_INNER);
     }
 
     /**
@@ -446,7 +457,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase
      * @testdox unit test: Text process*() methods will return proper array when internally called, part of extension API
      * @dataProvider providerData
      * @covers Zend\Db\Sql\Select::processSelect
-     * @covers Zend\Db\Sql\Select::processJoin
+     * @covers Zend\Db\Sql\Select::processJoins
      * @covers Zend\Db\Sql\Select::processWhere
      * @covers Zend\Db\Sql\Select::processGroup
      * @covers Zend\Db\Sql\Select::processHaving
@@ -758,12 +769,12 @@ class SelectTest extends \PHPUnit_Framework_TestCase
 
         // joins with a few keywords in the on clause
         $select28 = new Select;
-        $select28->from('foo')->join('zac', '(m = n AND c.x) BETWEEN x AND y.z');
+        $select28->from('foo')->join('zac', '(m = n AND c.x) BETWEEN x AND y.z OR (c.x < y.z AND c.x <= y.z AND c.x > y.z AND c.x >= y.z)');
         $sqlPrep28 = // same
-        $sqlStr28 = 'SELECT "foo".*, "zac".* FROM "foo" INNER JOIN "zac" ON ("m" = "n" AND "c"."x") BETWEEN "x" AND "y"."z"';
+        $sqlStr28 = 'SELECT "foo".*, "zac".* FROM "foo" INNER JOIN "zac" ON ("m" = "n" AND "c"."x") BETWEEN "x" AND "y"."z" OR ("c"."x" < "y"."z" AND "c"."x" <= "y"."z" AND "c"."x" > "y"."z" AND "c"."x" >= "y"."z")';
         $internalTests28 = array(
             'processSelect' => array(array(array('"foo".*'), array('"zac".*')), '"foo"'),
-            'processJoins'   => array(array(array('INNER', '"zac"', '("m" = "n" AND "c"."x") BETWEEN "x" AND "y"."z"')))
+            'processJoins'  => array(array(array('INNER', '"zac"', '("m" = "n" AND "c"."x") BETWEEN "x" AND "y"."z" OR ("c"."x" < "y"."z" AND "c"."x" <= "y"."z" AND "c"."x" > "y"."z" AND "c"."x" >= "y"."z")')))
         );
 
         // order with compound name

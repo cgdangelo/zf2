@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  * @package   Zend_Serializer
  */
@@ -38,8 +38,8 @@ class IgBinary extends AbstractAdapter
             );
         }
 
-        if (self::$serializedNull === null) {
-            self::$serializedNull = igbinary_serialize(null);
+        if (static::$serializedNull === null) {
+            static::$serializedNull = igbinary_serialize(null);
         }
 
         parent::__construct($options);
@@ -74,7 +74,7 @@ class IgBinary extends AbstractAdapter
      */
     public function unserialize($serialized)
     {
-        if ($serialized === self::$serializedNull) {
+        if ($serialized === static::$serializedNull) {
             return null;
         }
 

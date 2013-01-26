@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  * @package   Zend_View
  */
@@ -92,6 +92,11 @@ class PhpRenderer implements Renderer, TreeRendererInterface
      * @var array Temporary variable stack; used when variables passed to render()
      */
     private $__varsCache = array();
+
+    /**
+     * @var array Cache for the plugin call
+     */
+    private $__pluginCache = array();
 
     /**
      * Constructor.
@@ -350,11 +355,13 @@ class PhpRenderer implements Renderer, TreeRendererInterface
      */
     public function __call($method, $argv)
     {
-        $helper = $this->plugin($method);
-        if (is_callable($helper)) {
-            return call_user_func_array($helper, $argv);
+        if (!isset($this->__pluginCache[$method])) {
+            $this->__pluginCache[$method] = $this->plugin($method);
         }
-        return $helper;
+        if (is_callable($this->__pluginCache[$method])) {
+            return call_user_func_array($this->__pluginCache[$method], $argv);
+        }
+        return $this->__pluginCache[$method];
     }
 
     /**
@@ -515,5 +522,4 @@ class PhpRenderer implements Renderer, TreeRendererInterface
     {
         $this->__vars = clone $this->vars();
     }
-
 }

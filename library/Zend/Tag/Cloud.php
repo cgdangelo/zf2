@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  * @package   Zend_Tag
  */
@@ -244,7 +244,7 @@ class Cloud
         }
 
         if (!($decorator instanceof Cloud\Decorator\AbstractTag)) {
-            throw new Exception\InvalidArgumentException('DecoratorInterface is no instance of Cloud\Decorator\Tag');
+            throw new Exception\InvalidArgumentException('DecoratorInterface is no instance of Cloud\Decorator\AbstractTag');
         }
 
         $this->tagDecorator = $decorator;

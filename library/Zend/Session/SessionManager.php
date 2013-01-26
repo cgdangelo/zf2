@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  * @package   Zend_Session
  */
@@ -11,7 +11,6 @@
 namespace Zend\Session;
 
 use Zend\EventManager\EventManagerInterface;
-use Zend\Session\SaveHandler\SaveHandlerInterface;
 
 /**
  * Session ManagerInterface implementation utilizing ext/session
@@ -41,6 +40,20 @@ class SessionManager extends AbstractManager
      * @var EventManagerInterface Validation chain to determine if session is valid
      */
     protected $validatorChain;
+
+    /**
+     * Constructor
+     *
+     * @param  Config\ConfigInterface|null $config
+     * @param  Storage\StorageInterface|null $storage
+     * @param  SaveHandler\SaveHandlerInterface|null $saveHandler
+     * @throws Exception\RuntimeException
+     */
+    public function __construct(Config\ConfigInterface $config = null, Storage\StorageInterface $storage = null, SaveHandler\SaveHandlerInterface $saveHandler = null)
+    {
+        parent::__construct($config, $storage, $saveHandler);
+        register_shutdown_function(array($this, 'writeClose'));
+    }
 
     /**
      * Does a session exist and is it currently active?
@@ -78,15 +91,13 @@ class SessionManager extends AbstractManager
         }
 
         $saveHandler = $this->getSaveHandler();
-        if ($saveHandler instanceof SaveHandlerInterface) {
+        if ($saveHandler instanceof SaveHandler\SaveHandlerInterface) {
             // register the session handler with ext/session
             $this->registerSaveHandler($saveHandler);
         }
 
         session_start();
-        if (!$this->isValid()) {
-            throw new Exception\RuntimeException('Session validation failed');
-        }
+
         $storage = $this->getStorage();
 
         // Since session is starting, we need to potentially repopulate our
@@ -96,6 +107,9 @@ class SessionManager extends AbstractManager
                 $storage->fromArray($_SESSION);
             }
             $_SESSION = $storage;
+        }
+        if (!$this->isValid()) {
+            throw new Exception\RuntimeException('Session validation failed');
         }
     }
 
@@ -148,10 +162,12 @@ class SessionManager extends AbstractManager
         // flushed to the session handler. As such, we now mark the storage
         // object isImmutable.
         $storage  = $this->getStorage();
-        $_SESSION = (array) $storage;
-        session_write_close();
-        $storage->fromArray($_SESSION);
-        $storage->markImmutable();
+        if (!$storage->isImmutable()) {
+            $_SESSION = $storage->toArray();
+            session_write_close();
+            $storage->fromArray($_SESSION);
+            $storage->markImmutable();
+        }
     }
 
     /**
@@ -319,7 +335,7 @@ class SessionManager extends AbstractManager
     public function isValid()
     {
         $validator = $this->getValidatorChain();
-        $responses = $validator->triggerUntil('session.validate', $this, array($this), function($test) {
+        $responses = $validator->triggerUntil('session.validate', $this, array($this), function ($test) {
             return !$test;
         });
         if ($responses->stopped()) {

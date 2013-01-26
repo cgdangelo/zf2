@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Mvc_Router
  * @subpackage Http
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -31,7 +31,7 @@ use Zend\Mvc\Router\RouteMatch as BaseRouteMatch;
  *
  * @package    Zend_Mvc_Router
  * @subpackage Http
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class RouteMatch extends BaseRouteMatch
@@ -77,10 +77,10 @@ class RouteMatch extends BaseRouteMatch
     /**
      * Merge parameters from another match.
      *
-     * @param  self $match
-     * @return self
+     * @param  RouteMatch $match
+     * @return RouteMatch
      */
-    public function merge(self $match)
+    public function merge(RouteMatch $match)
     {
         $this->params  = array_merge($this->params, $match->getParams());
         $this->length += $match->getLength();

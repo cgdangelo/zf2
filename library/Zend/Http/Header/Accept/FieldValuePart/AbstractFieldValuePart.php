@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  * @package   Zend_Http
  */
@@ -28,12 +28,40 @@ abstract class AbstractFieldValuePart
     private $internalValues;
 
     /**
+     * A Field Value Part this Field Value Part matched against.
+     * @var AbstractFieldValuePart
+     */
+    protected $matchedAgainst;
+
+    /**
      *
      * @param object $internalValues
      */
     public function __construct($internalValues)
     {
         $this->internalValues = $internalValues;
+    }
+
+    /**
+     * Set a Field Value Part this Field Value Part matched against.
+     *
+     * @param AbstractFieldValuePart $matchedPart
+     * @return AbstractFieldValuePart provides fluent interface
+     */
+    public function setMatchedAgainst(AbstractFieldValuePart $matchedAgainst)
+    {
+        $this->matchedAgainst = $matchedAgainst;
+        return $this;
+    }
+
+    /**
+     * Get a Field Value Part this Field Value Part matched against.
+     *
+     * @return AbstractFieldValuePart|null
+     */
+    public function getMatchedAgainst()
+    {
+        return $this->matchedAgainst;
     }
 
     /**
@@ -86,5 +114,4 @@ abstract class AbstractFieldValuePart
     {
         return $this->getInternalValues()->$key;
     }
-
 }

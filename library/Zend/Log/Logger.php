@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  * @package   Zend_Log
  */
@@ -69,14 +69,14 @@ class Logger implements LoggerInterface
     /**
      * Registered error handler
      *
-     * @var boolean
+     * @var bool
      */
     protected static $registeredErrorHandler = false;
 
     /**
      * Registered exception handler
      *
-     * @var boolean
+     * @var bool
      */
     protected static $registeredExceptionHandler = false;
 
@@ -354,7 +354,7 @@ class Logger implements LoggerInterface
     public static function registerErrorHandler(Logger $logger)
     {
         // Only register once per instance
-        if (self::$registeredErrorHandler) {
+        if (static::$registeredErrorHandler) {
             return false;
         }
 
@@ -377,7 +377,7 @@ class Logger implements LoggerInterface
             E_USER_DEPRECATED   => self::DEBUG
         );
 
-        set_error_handler(function($errno, $errstr, $errfile, $errline, $errcontext) use ($errorHandlerMap, $logger) {
+        set_error_handler(function ($errno, $errstr, $errfile, $errline, $errcontext) use ($errorHandlerMap, $logger) {
             $errorLevel = error_reporting();
 
             if ($errorLevel & $errno) {
@@ -394,7 +394,7 @@ class Logger implements LoggerInterface
                 ));
             }
         });
-        self::$registeredErrorHandler = true;
+        static::$registeredErrorHandler = true;
         return true;
     }
 
@@ -405,7 +405,7 @@ class Logger implements LoggerInterface
     public static function unregisterErrorHandler()
     {
         restore_error_handler();
-        self::$registeredErrorHandler = false;
+        static::$registeredErrorHandler = false;
     }
 
     /**
@@ -419,7 +419,7 @@ class Logger implements LoggerInterface
     public static function registerExceptionHandler(Logger $logger)
     {
         // Only register once per instance
-        if (self::$registeredExceptionHandler) {
+        if (static::$registeredExceptionHandler) {
             return false;
         }
 
@@ -438,7 +438,7 @@ class Logger implements LoggerInterface
             }
             $logger->log(Logger::ERR, $exception->getMessage(), $extra);
         });
-        self::$registeredExceptionHandler = true;
+        static::$registeredExceptionHandler = true;
         return true;
     }
 
@@ -448,6 +448,6 @@ class Logger implements LoggerInterface
     public static function unregisterExceptionHandler()
     {
         restore_exception_handler();
-        self::$registeredExceptionHandler = false;
+        static::$registeredExceptionHandler = false;
     }
 }

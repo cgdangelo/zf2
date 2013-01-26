@@ -3,13 +3,14 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  * @package   Zend_Stdlib
  */
 
 namespace Zend\Stdlib\Hydrator;
 
+use ReflectionMethod;
 use Zend\Stdlib\Exception;
 
 /**
@@ -21,13 +22,13 @@ class ClassMethods extends AbstractHydrator
 {
     /**
      * Flag defining whether array keys are underscore-separated (true) or camel case (false)
-     * @var boolean
+     * @var bool
      */
     protected $underscoreSeparatedKeys;
 
     /**
      * Define if extract values will use camel case or name with underscore
-     * @param boolean $underscoreSeparatedKeys
+     * @param  bool $underscoreSeparatedKeys
      */
     public function __construct($underscoreSeparatedKeys = true)
     {
@@ -52,7 +53,7 @@ class ClassMethods extends AbstractHydrator
             ));
         }
 
-        $transform = function($letters) {
+        $transform = function ($letters) {
             $letter = array_shift($letters);
             return '_' . strtolower($letter);
         };
@@ -61,6 +62,11 @@ class ClassMethods extends AbstractHydrator
 
         foreach ($methods as $method) {
             if (!preg_match('/^(get|has|is)[A-Z]\w*/', $method)) {
+                continue;
+            }
+
+            $reflectionMethod = new ReflectionMethod(get_class($object) . '::' . $method);
+            if ($reflectionMethod->getNumberOfParameters() > 0) {
                 continue;
             }
 
@@ -97,16 +103,16 @@ class ClassMethods extends AbstractHydrator
             ));
         }
 
-        $transform = function($letters) {
+        $transform = function ($letters) {
             $letter = substr(array_shift($letters), 1, 1);
             return ucfirst($letter);
         };
 
         foreach ($data as $property => $value) {
-            if ($this->underscoreSeparatedKeys) {
-                $property = preg_replace_callback('/(_[a-z])/', $transform, $property);
-            }
             $method = 'set' . ucfirst($property);
+            if ($this->underscoreSeparatedKeys) {
+                $method = preg_replace_callback('/(_[a-z])/', $transform, $method);
+            }
             if (method_exists($object, $method)) {
                 $value = $this->hydrateValue($property, $value);
 

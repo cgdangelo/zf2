@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  * @package   Zend_Feed
  */
@@ -78,7 +78,7 @@ class PubSubHubbub
      */
     public static function setHttpClient(Http\Client $httpClient)
     {
-        self::$httpClient = $httpClient;
+        static::$httpClient = $httpClient;
     }
 
     /**
@@ -90,12 +90,12 @@ class PubSubHubbub
      */
     public static function getHttpClient()
     {
-        if (!isset(self::$httpClient)) {
-            self::$httpClient = new Http\Client;
+        if (!isset(static::$httpClient)) {
+            static::$httpClient = new Http\Client;
         } else {
-            self::$httpClient->resetParameters();
+            static::$httpClient->resetParameters();
         }
-        return self::$httpClient;
+        return static::$httpClient;
     }
 
     /**
@@ -106,7 +106,7 @@ class PubSubHubbub
      */
     public static function clearHttpClient()
     {
-        self::$httpClient = null;
+        static::$httpClient = null;
     }
 
     /**

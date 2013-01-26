@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  * @package   Zend_Mvc
  */
@@ -61,9 +61,9 @@ class InjectViewModelListener implements ListenerAggregateInterface
     /**
      * Insert the view model into the event
      *
-     * Inspects the MVC result; if it is a view model, it then either (a) adds
-     * it as a child to the default, composed view model, or (b) replaces it,
-     * if the result  is marked as terminable.
+     * Inspects the MVC result; if it's a view model, it then either (a) adds
+     * it as a child to the default, composed view model, or (b) replaces it
+     * if the result is marked as terminable.
      *
      * @param  MvcEvent $e
      * @return void

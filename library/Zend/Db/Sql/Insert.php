@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  * @package   Zend_Db
  */
@@ -101,24 +101,27 @@ class Insert extends AbstractSql implements SqlInterface, PreparableSqlInterface
             throw new \InvalidArgumentException('values() expects an array of values');
         }
 
+        // determine if this is assoc or a set of values
         $keys = array_keys($values);
         $firstKey = current($keys);
 
-        if (is_string($firstKey)) {
-            if ($flag == self::VALUES_MERGE) {
-                $this->columns(array_merge($this->columns, $keys));
-            } else {
-                $this->columns($keys);
-            }
-            $values = array_values($values);
-        } elseif (is_int($firstKey)) {
-            $values = array_values($values);
+        if ($flag == self::VALUES_SET) {
+            $this->columns = array();
+            $this->values = array();
         }
 
-        if ($flag == self::VALUES_MERGE) {
-            $this->values = array_merge($this->values, $values);
-        } else {
-            $this->values = $values;
+        if (is_string($firstKey)) {
+            foreach ($keys as $key) {
+                if (($index = array_search($key, $this->columns)) !== false) {
+                    $this->values[$index] = $values[$key];
+                } else {
+                    $this->columns[] = $key;
+                    $this->values[] = $values[$key];
+                }
+            }
+        } elseif (is_int($firstKey)) {
+            // determine if count of columns should match count of values
+            $this->values = array_merge($this->values, array_values($values));
         }
 
         return $this;
@@ -198,7 +201,7 @@ class Insert extends AbstractSql implements SqlInterface, PreparableSqlInterface
             if ($value instanceof Expression) {
                 $exprData = $this->processExpression($value, $adapterPlatform);
                 $values[] = $exprData->getSql();
-            } elseif (is_null($value)) {
+            } elseif ($value === null) {
                 $values[] = 'NULL';
             } else {
                 $values[] = $adapterPlatform->quoteValue($value);

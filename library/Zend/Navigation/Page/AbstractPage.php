@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  * @package   Zend_Navigation
  */
@@ -876,7 +876,7 @@ abstract class AbstractPage extends AbstractContainer
             );
         }
 
-        $method = 'set' . self::normalizePropertyName($property);
+        $method = 'set' . static::normalizePropertyName($property);
 
         if ($method != 'setOptions' && method_exists($this, $method)
         ) {
@@ -907,7 +907,7 @@ abstract class AbstractPage extends AbstractContainer
             );
         }
 
-        $method = 'get' . self::normalizePropertyName($property);
+        $method = 'get' . static::normalizePropertyName($property);
 
         if (method_exists($this, $method)) {
             return $this->$method();
@@ -963,7 +963,7 @@ abstract class AbstractPage extends AbstractContainer
      */
     public function __isset($name)
     {
-        $method = 'get' . self::normalizePropertyName($name);
+        $method = 'get' . static::normalizePropertyName($name);
         if (method_exists($this, $method)) {
             return true;
         }
@@ -982,7 +982,7 @@ abstract class AbstractPage extends AbstractContainer
      */
     public function __unset($name)
     {
-        $method = 'set' . self::normalizePropertyName($name);
+        $method = 'set' . static::normalizePropertyName($name);
         if (method_exists($this, $method)) {
             throw new Exception\InvalidArgumentException(
                 sprintf(

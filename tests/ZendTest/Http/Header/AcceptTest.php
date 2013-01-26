@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  * @package   Zend_Http
  */
@@ -190,6 +190,38 @@ class AcceptTest extends \PHPUnit_Framework_TestCase
         $acceptHeader = Accept::fromString($acceptStr);
 
         $this->assertEquals($acceptStr, $acceptHeader->getFieldName().': ' . $acceptHeader->getFieldValue());
+    }
+
+
+    public function testMatchReturnsMatchedAgainstObject()
+    {
+        $acceptStr = 'Accept: text/html;q=1; version=23; level=5, text/json;level=1,' .
+                'text/xml;level=2;q=0.4';
+        $acceptHeader = Accept::fromString($acceptStr);
+
+        $res = $acceptHeader->match('text/html; _randomValue=foobar');
+        $this->assertInstanceOf(
+                'Zend\Http\Header\Accept\FieldValuePart\AbstractFieldValuePart',
+                $res->getMatchedAgainst()
+        );
+        $this->assertEquals(
+                'foobar',
+                $res->getMatchedAgainst()->getParams()->_randomValue
+        );
+
+        $acceptStr = 'Accept: */*; ';
+        $acceptHeader = Accept::fromString($acceptStr);
+
+        $res = $acceptHeader->match('text/html; _foo=bar');
+        $this->assertInstanceOf(
+                'Zend\Http\Header\Accept\FieldValuePart\AbstractFieldValuePart',
+                $res->getMatchedAgainst()
+        );
+
+        $this->assertEquals(
+                'bar',
+                $res->getMatchedAgainst()->getParams()->_foo
+        );
     }
 
 

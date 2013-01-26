@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  * @package   Zend_Code
  */
@@ -192,7 +192,7 @@ class DocBlockScanner implements ScannerInterface
         $currentWord = null;
         $currentLine = null;
 
-        $MACRO_STREAM_ADVANCE_CHAR       = function ($positionsForward = 1) use (&$stream, &$streamIndex, &$currentChar, &$currentWord, &$currentLine, &$annotationMode) {
+        $MACRO_STREAM_ADVANCE_CHAR       = function ($positionsForward = 1) use (&$stream, &$streamIndex, &$currentChar, &$currentWord, &$currentLine) {
             $positionsForward = ($positionsForward > 0) ? $positionsForward : 1;
             $streamIndex      = ($streamIndex === null) ? 0 : $streamIndex + $positionsForward;
             if (!isset($stream[$streamIndex])) {
@@ -206,12 +206,7 @@ class DocBlockScanner implements ScannerInterface
             if ($currentChar === ' ') {
                 $currentWord = (preg_match('#( +)#', $currentLine, $matches) === 1) ? $matches[1] : $currentLine;
             } else {
-                if ($annotationMode) {
-                    $currentWord = (($matches = strpos($currentLine, ' ')) !== false) ? substr($currentLine, 0,
-                                                                                               $matches) : $currentLine;
-                } else {
-                    $currentWord = strtok($currentLine, " \n\t\r");
-                }
+                $currentWord = (($matches = strpos($currentLine, ' ')) !== false) ? substr($currentLine, 0, $matches) : $currentLine;
             }
             return $currentChar;
         };
@@ -269,7 +264,7 @@ class DocBlockScanner implements ScannerInterface
             goto TOKENIZER_TOP;
         }
 
-        if ($currentChar === ' ') {
+        if ($currentChar === ' ' || $currentChar === "\t") {
             $MACRO_TOKEN_SET_TYPE(($context & $CONTEXT_INSIDE_ASTERISK) ? 'DOCBLOCK_WHITESPACE' : 'DOCBLOCK_WHITESPACE_INDENT');
             $MACRO_TOKEN_APPEND_WORD();
             $MACRO_TOKEN_ADVANCE();

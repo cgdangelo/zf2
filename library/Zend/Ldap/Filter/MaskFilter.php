@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  * @package   Zend_Ldap
  */
@@ -30,7 +30,7 @@ class MaskFilter extends StringFilter
         $args = func_get_args();
         array_shift($args);
         for ($i = 0; $i < count($args); $i++) {
-            $args[$i] = self::escapeValue($args[$i]);
+            $args[$i] = static::escapeValue($args[$i]);
         }
         $filter = vsprintf($mask, $args);
         parent::__construct($filter);

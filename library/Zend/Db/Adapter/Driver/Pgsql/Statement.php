@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  * @package   Zend_Db
  */
@@ -157,7 +157,7 @@ class Statement implements StatementInterface
         );
 
         $this->sql = $sql;
-        $this->statementName = 'statement' . ++self::$statementIndex;
+        $this->statementName = 'statement' . ++static::$statementIndex;
         $this->resource = pg_prepare($this->pgsql, $this->statementName, $sql);
     }
 

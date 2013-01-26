@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  * @package   Zend_I18n
  */
@@ -180,7 +180,7 @@ class Iban extends AbstractValidator
         if ($countryCode !== null) {
             $countryCode = (string) $countryCode;
 
-            if (!isset(self::$ibanRegex[$countryCode])) {
+            if (!isset(static::$ibanRegex[$countryCode])) {
                 throw new Exception\InvalidArgumentException(
                     "Country code '{$countryCode}' invalid by ISO 3166-1 or not supported"
                 );
@@ -234,19 +234,19 @@ class Iban extends AbstractValidator
             $countryCode = substr($value, 0, 2);
         }
 
-        if (!array_key_exists($countryCode, self::$ibanRegex)) {
+        if (!array_key_exists($countryCode, static::$ibanRegex)) {
             $this->setValue($countryCode);
             $this->error(self::NOTSUPPORTED);
             return false;
         }
 
-        if (!$this->allowNonSepa && !in_array($countryCode, self::$sepaCountries)) {
+        if (!$this->allowNonSepa && !in_array($countryCode, static::$sepaCountries)) {
             $this->setValue($countryCode);
             $this->error(self::SEPANOTSUPPORTED);
             return false;
         }
 
-        if (!preg_match('/^' . self::$ibanRegex[$countryCode] . '$/', $value)) {
+        if (!preg_match('/^' . static::$ibanRegex[$countryCode] . '$/', $value)) {
             $this->error(self::FALSEFORMAT);
             return false;
         }

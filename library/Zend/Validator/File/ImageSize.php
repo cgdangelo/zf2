@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  * @package   Zend_Validator
  */
@@ -324,7 +324,7 @@ class ImageSize extends AbstractValidator
      *
      * @param  string $value Real file to check for image size
      * @param  array  $file  File data from \Zend\File\Transfer\Transfer
-     * @return boolean
+     * @return bool
      */
     public function isValid($value, $file = null)
     {
@@ -342,7 +342,7 @@ class ImageSize extends AbstractValidator
         ErrorHandler::stop();
         $this->setValue($file);
 
-        if (empty($size) or ($size[0] === 0) or ($size[1] === 0)) {
+        if (empty($size) || ($size[0] === 0) || ($size[1] === 0)) {
             return $this->throwError($file, self::NOT_DETECTED);
         }
 
@@ -352,7 +352,7 @@ class ImageSize extends AbstractValidator
             $this->throwError($file, self::WIDTH_TOO_SMALL);
         }
 
-        if (($this->getMaxWidth() !== null) and ($this->getMaxWidth() < $this->width)) {
+        if (($this->getMaxWidth() !== null) && ($this->getMaxWidth() < $this->width)) {
             $this->throwError($file, self::WIDTH_TOO_BIG);
         }
 
@@ -360,7 +360,7 @@ class ImageSize extends AbstractValidator
             $this->throwError($file, self::HEIGHT_TOO_SMALL);
         }
 
-        if (($this->getMaxHeight() !== null) and ($this->getMaxHeight() < $this->height)) {
+        if (($this->getMaxHeight() !== null) && ($this->getMaxHeight() < $this->height)) {
             $this->throwError($file, self::HEIGHT_TOO_BIG);
         }
 
